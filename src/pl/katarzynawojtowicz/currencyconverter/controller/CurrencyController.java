@@ -8,9 +8,8 @@ import java.net.URL;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-import pl.katarzynawojtowicz.currencyconverter.view.Czlowiek;
-
 public class CurrencyController {
+	private ObjectMapper mapper = new ObjectMapper();
 	private String[] currencies = { "AUD", "BGN", "BRL", "CAD", "CHF", "CNY", "CZK", "DKK", "EUR", "GBP", "HKD", "HRK",
 			"HUF", "IDR", "ILS", "INR", "JPY", "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "RON", "RUB", "SEK",
 			"SGD", "THB", "TRY", "USD", "ZAR" };
@@ -32,12 +31,16 @@ public class CurrencyController {
 			return 0;
 		}
 		String currencyJson = result.toString();
-		
-		
-//		double conversionRate = currencyResponse.getRates().get("PLN");
-//		return amount * conversionRate;
-		
-		return amount;
+		CurrencyResponseTO obj = null;
+		try {
+			obj = mapper.readValue(currencyJson, CurrencyResponseTO.class);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Double conversionRate = obj.getRates().get(destinationCurrency);
+
+		return amount * conversionRate;
 	}
 
 	public String[] getCurrencies() {
